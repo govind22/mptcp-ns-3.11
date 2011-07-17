@@ -1,0 +1,15 @@
+To build animator:
+  1) Install qt4 (including qt4-dev-tools)
+  2) qmake NetAnim.pro (or qmake-qt4 NetAnim.pro)
+  3) A Makefile should be created in the current directory
+  4) Build with "make"
+  5) Test animator with: ./NetAnim dumbbell.tr
+                            or
+                         ./NetAnim grid.tr
+
+
+Compile Issues:
+  If make fails, ensure that the qt4 version of qtmake is being used.  If you have 
+  qt4 installed, but can't issue qmake command, it may need to be added to the path, 
+  or simply specify the full path the the executable.
+
