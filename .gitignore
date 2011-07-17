@@ -1,0 +1,12 @@
+ns-3.8/build/
+pybindgen-0.14.1/
+nsc-0.5.2/
+*.pyc
+*.log
+*.o
+*.png
+*.swp
+*.tr
+*.pcap
+*.gz
+
