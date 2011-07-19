@@ -104,7 +104,6 @@ DropTailQueue::DoEnqueue (Ptr<Packet> p)
 
   NS_LOG_LOGIC ("Number packets " << m_packets.size ());
   NS_LOG_LOGIC ("Number bytes " << m_bytesInQueue);
-
   return true;
 }
 
