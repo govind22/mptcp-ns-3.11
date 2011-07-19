@@ -52,7 +52,7 @@ int smFlowByteCount = 50 * 1024;
 int qFlowCount = 32;
 int qFlowByteCount = 2 * 1024;
 int qFlowPartCount = 50;
-Time qFlowInterval = MilliSeconds(100);
+Time qFlowInterval = MilliSeconds(10);
 
 Time simStartTime = Seconds(0.001);
 Time simStopTime = Seconds(0.100);
@@ -140,7 +140,7 @@ void startFlow(Ptr<Node> srcNode, Ptr<Node> dstNode, uint16_t port, uint64_t dat
   ftpServer->Configure(data, port, startTime, true);
   ftpServer->SetTag(tag, id);
   ftpServer->SetCallBack(&onFlowStart, stopcallback);
-  ftpServer->SetStartTime(startTime + Seconds(0.001));
+  ftpServer->SetStartTime(startTime);
   ftpServer->SetStopTime(simStopTime - Seconds(0.000001));
   dstNode->AddApplication(ftpServer);
   
@@ -150,7 +150,7 @@ void startFlow(Ptr<Node> srcNode, Ptr<Node> dstNode, uint16_t port, uint64_t dat
   ftpClient->Configure(ftpServerAddress, data);
   ftpClient->SetTag(tag, id);
   ftpClient->SetCallBack(&onFlowStart, &onFlowStop);
-  ftpClient->SetStartTime(startTime + Seconds(0.001));
+  ftpClient->SetStartTime(startTime);
   srcNode->AddApplication(ftpClient);
 }
 
@@ -240,7 +240,6 @@ void startQFlow( Time startTime = Now(), int concurrentFlowCount = 1)
         usedOtherServerIDs.insert(otherServerID);
         //if (otherServerID == 0) flowsWithServer0+= 1;
       }
-      
       qFlowID++;
   }
   //std::cerr << "\t\t\tFlows with Server 0 = " << flowsWithServer0 <<"\n";
@@ -397,7 +396,7 @@ int main (int argc, char *argv[])
   }
 
   std::cerr << "\tSetting up parition/aggregate query flows every "<< qFlowInterval.GetMilliSeconds() <<"ms..." << "\n";
-  for (Time t = simStartTime /*+ qFlowInterval*/; t < simStopTime/*- qFlowInterval*/; t = t + qFlowInterval)
+  for (Time t = simStartTime + qFlowInterval; t < simStopTime - qFlowInterval - qFlowInterval; t = t + qFlowInterval)
   { 
     startQFlow(t, qFlowCount);
   }

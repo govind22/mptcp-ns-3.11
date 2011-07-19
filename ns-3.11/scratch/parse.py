@@ -9,11 +9,30 @@ if len(sys.argv) < 3:
  
 fname = str(sys.argv[1])
 fltr = str(sys.argv[2])
-bincount = 1000
+bincount = 10000
+cdfthresh = 10
+dropthresh = 10000
 
 times = [float(line.split()[11]) for line in open(fname,"r") if line.startswith(fltr)]
-hist, bins = numpy.histogram(times, bincount)
-cumhist = [x*100/sum(hist) for x in  hist.cumsum()]
+ctimes = [time for time in times if time < dropthresh]
+dtimes = [time for time in times if time >= dropthresh]
+hist, bins = numpy.histogram(ctimes, bincount, range=(0, cdfthresh))
+cumhist = [x*100.0/len(times) for x in  hist.cumsum()]
+
+stats="----------------------------------------- \n"
+stats+="# Total flows     = " + str(len(times)) + "\n"
+stats+="# Completed flows = " + str(len(ctimes)) + "\n"
+stats+="# Dropped flows   = " + str(len(dtimes)) + "\n"
+stats+="----------------------------------------- \n"
+stats+="For completed flows" + "\n"
+stats+="Min     = " + str(min(ctimes)) + "\n"
+stats+="Max     = " + str(max(ctimes)) + "\n"
+stats+="Mean    = " + str(numpy.average(ctimes)) + "\n"
+stats+="Median  = " + str(numpy.median(ctimes)) + "\n"
+stats+="StdDev  = " + str(numpy.std(ctimes)) + "\n"
+stats+="----------------------------------------- \n"
+
+print stats
 
 cdf_fname = fname + "." + fltr.lower() + ".cdf"
 stat_fname = fname + "." + fltr.lower() + ".stat"
@@ -24,12 +43,8 @@ for i in range(len(hist)):
 cdf_file.close()
 
 stat_file = open(stat_fname, "w")
-stat_file.write("Samples = " + str(len(times)) + "\n")
-stat_file.write("Min     = " + str(min(times)) + "\n")
-stat_file.write("Max     = " + str(max(times)) + "\n")
-stat_file.write("Mean    = " + str(numpy.average(times)) + "\n")
-stat_file.write("Median  = " + str(numpy.median(times)) + "\n")
-stat_file.write("StdDev  = " + str(numpy.std(times)) + "\n")
+stat_file.write(stats)
+stat_file.close()
 
 xlabel("Flow completion time (ms)")
 ylabel("CDF (%)")
